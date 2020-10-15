@@ -1,0 +1,10 @@
+# from ST
+src/
+libSTLinkUSBDriver.*
+version.txt
+
+# compile stuff
+build/
+*.so
+
+.DS_Store
