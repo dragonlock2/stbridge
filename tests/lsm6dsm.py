@@ -1,16 +1,19 @@
+import sys, os
+sys.path.append(os.getcwd())
+
+import stbridge as st
+
 import struct
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-import stbridge
-
 ADDR = 0x6a
 
-stbridge.open()
-stbridge.initI2C(400)
+st.open()
+st.initI2C(400)
 
-stbridge.writeI2C(ADDR, [0x10, 0b10100000]) # accel settings
-stbridge.writeI2C(ADDR, [0x11, 0b10101000]) # gyro settings
+st.writeI2C(ADDR, [0x10, 0b10100000]) # accel settings
+st.writeI2C(ADDR, [0x11, 0b10101000]) # gyro settings
 
 # pybridge.writeI2C(ADDR, [0x28]) # accel
 # a = pybridge.readI2C(ADDR, 6)
@@ -38,10 +41,10 @@ ax.legend(bbox_to_anchor=(1,1), loc='upper left')
 
 def update(i):
 	# get data
-	stbridge.writeI2C(ADDR, [0x28]) # accel
-	dat = struct.unpack('<3h', bytes(stbridge.readI2C(ADDR, 6)))
-	stbridge.writeI2C(ADDR, [0x22]) # gyro
-	dat += struct.unpack('<3h', bytes(stbridge.readI2C(ADDR, 6)))
+	st.writeI2C(ADDR, [0x28]) # accel
+	dat = struct.unpack('<3h', bytes(st.readI2C(ADDR, 6)))
+	st.writeI2C(ADDR, [0x22]) # gyro
+	dat += struct.unpack('<3h', bytes(st.readI2C(ADDR, 6)))
 
 	# update our lists
 	for val, ys in zip(dat, yss):
@@ -58,4 +61,4 @@ print('Close graph to exit...')
 ani = animation.FuncAnimation(fig, update, interval=INTERVAL, blit=True)
 plt.show()
 
-stbridge.close()
+st.close()

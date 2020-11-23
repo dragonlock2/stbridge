@@ -7,7 +7,7 @@
 #include <iostream>
 #include <string>
 // #include <format> // no compiler support yet :(
-#include <fmt/core.h> // once support added switch back to std::format
+#include <fmt/format.h> // once support added switch back to std::format
 
 #include "bridge.h"
 
