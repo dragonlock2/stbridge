@@ -1,0 +1,3 @@
+[submodule "libs"]
+	path = libs
+	url = https://github.com/dragonlock2/STLINK-V3-BRIDGE_libusb.git
