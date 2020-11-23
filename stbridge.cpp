@@ -44,12 +44,14 @@ void close() {
 }
 
 float getTargetVoltage() {
+	checkNull(m_pBrg);
 	float v;
 	checkError(m_pBrg->GetTargetVoltage(&v));
 	return v;
 }
 
 uint32_t initSPI(int kHz, bitorderSPI bitorder, modeSPI mode) {
+	checkNull(m_pBrg);
 	Brg_SpiInitT spiParams;
 	spiParams.Direction = SPI_DIRECTION_2LINES_FULLDUPLEX;
 	spiParams.Mode = SPI_MODE_MASTER;
@@ -100,6 +102,7 @@ uint32_t initSPI(int kHz, bitorderSPI bitorder, modeSPI mode) {
 }
 
 boost::python::list readSPI(uint16_t len) {
+	checkNull(m_pBrg);
 	uint8_t buff[len];
 	checkError(m_pBrg->ReadSPI(buff, len, NULL));
 
@@ -112,6 +115,7 @@ boost::python::list readSPI(uint16_t len) {
 }
 
 void writeSPI(boost::python::list data) {
+	checkNull(m_pBrg);
 	uint8_t buff[boost::python::len(data)];
 
 	for (auto i = 0; i < boost::python::len(data); i++) {
@@ -129,10 +133,12 @@ void writeSPI(boost::python::list data) {
 }
 
 void setnssSPI(bool level) {
+	checkNull(m_pBrg);
 	checkError(m_pBrg->SetSPIpinCS(level ? SPI_NSS_HIGH : SPI_NSS_LOW));
 }
 
 void initI2C(int kHz) {
+	checkNull(m_pBrg);
 	Brg_I2cInitT i2cParams;
 	i2cParams.OwnAddr = 0x00; // slave mode, not needed
 	i2cParams.AddrMode = I2C_ADDR_7BIT; // defaulting to 7 bit
@@ -157,6 +163,7 @@ void initI2C(int kHz) {
 }
 
 boost::python::list readI2C(uint16_t addr, uint16_t len) {
+	checkNull(m_pBrg);
 	if (len == 0) {
 		throw "Must read at least 1 byte!";
 	}
@@ -173,6 +180,7 @@ boost::python::list readI2C(uint16_t addr, uint16_t len) {
 }
 
 void writeI2C(uint16_t addr, boost::python::list data) {
+	checkNull(m_pBrg);
 	if (boost::python::len(data) == 0) {
 		throw "Must write at least 1 byte!";
 	}
@@ -196,6 +204,7 @@ void writeI2C(uint16_t addr, boost::python::list data) {
 Brg_GpioConfT gpioConf[BRG_GPIO_MAX_NB];
 
 void initGPIO() {
+	checkNull(m_pBrg);
 	// all inputs initially
 	for (int i = 0; i < BRG_GPIO_MAX_NB; i++) {
 		gpioConf[i].Mode = GPIO_MODE_INPUT;
@@ -212,6 +221,7 @@ void initGPIO() {
 }
 
 void pinmodeGPIO(uint8_t pin, modeGPIO mode) {
+	checkNull(m_pBrg);
 	if (pin >= BRG_GPIO_MAX_NB) {
 		throw "Invalid pin number!";
 	}
@@ -249,6 +259,7 @@ void pinmodeGPIO(uint8_t pin, modeGPIO mode) {
 }
 
 void writeGPIO(uint8_t pin, bool level) {
+	checkNull(m_pBrg);
 	if (pin >= BRG_GPIO_MAX_NB) {
 		throw "Invalid pin number!";
 	}
@@ -264,6 +275,7 @@ void writeGPIO(uint8_t pin, bool level) {
 }
 
 bool readGPIO(uint8_t pin) {
+	checkNull(m_pBrg);
 	if (pin >= BRG_GPIO_MAX_NB) {
 		throw "Invalid pin number!";
 	}
@@ -279,9 +291,15 @@ bool readGPIO(uint8_t pin) {
 	return gpioVals[pin] == GPIO_SET;
 }
 
-void checkError(Brg_StatusT stat) {
+inline void checkError(Brg_StatusT stat) {
 	if (stat != BRG_NO_ERR) {
 		throw fmt::format("BRG_ERR: {}", stat);
+	}
+}
+
+inline void checkNull(void* ptr) {
+	if (ptr == NULL) {
+		throw "You forgot to initialize?! 😱";
 	}
 }
 

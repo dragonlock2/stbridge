@@ -3,8 +3,6 @@
 Python wrapper for STLINK-V3-BRIDGE. Tested on MacOS and Linux. Uses libusb for cross-platform support.
 
 ## TODO
-* Fix compiler warnings
-* Improve robustness (basically check nullptrs)
 * Add CAN support
 
 ## Supported features

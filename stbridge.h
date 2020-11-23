@@ -41,6 +41,7 @@ namespace stbridge {
 	bool readGPIO(uint8_t pin);
 
 	void checkError(Brg_StatusT stat);
+	void checkNull(void* ptr);
 }
 
 void translate_c_str(const char* s) {
