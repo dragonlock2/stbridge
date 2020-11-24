@@ -269,22 +269,94 @@ std::ostream& operator<<(std::ostream &out, const msgCAN &msg) {
 	return out;
 }
 
-uint32_t initCAN(int bps) { // TODO
-	return 0;
+uint32_t initCAN(int bps) {
+	checkNull(m_pBrg);
+
+	Brg_CanInitT canParams;
+	// http://www.bittiming.can-wiki.info/
+	canParams.BitTimeConf.PropSegInTq = 1;
+	canParams.BitTimeConf.PhaseSeg1InTq = 4;
+	canParams.BitTimeConf.PhaseSeg2InTq = 2;
+	canParams.BitTimeConf.SjwInTq = 1;
+	canParams.Mode = CAN_MODE_NORMAL;
+	uint32_t finalCANbaud;
+	Brg_StatusT rc = m_pBrg->GetCANbaudratePrescal(&canParams.BitTimeConf, bps, &canParams.Prescaler, &finalCANbaud);
+
+	if (rc != BRG_COM_FREQ_MODIFIED) {
+		checkError(rc);
+	} else {
+		std::cout << "Change bit timings and recompile to make bps more accurate! 😊" << std::endl;
+	}
+
+	// https://stackoverflow.com/questions/57094729/what-is-the-meaning-of-canbus-function-mode-initilazing-settings-for-stm32
+	canParams.bIsAbomEn = false;
+	canParams.bIsAwumEn = false;
+	canParams.bIsNartEn = false;
+	canParams.bIsRflmEn = false;
+	canParams.bIsTxfpEn = false;
+	checkError(m_pBrg->InitCAN(&canParams, BRG_INIT_FULL)); // need a transceiver hooked up for this
+
+	// let all messages through
+	Brg_CanFilterConfT canFilterParams;
+	canFilterParams.FilterBankNb = 0;
+	canFilterParams.bIsFilterEn = true;
+	canFilterParams.FilterMode = CAN_FILTER_ID_MASK;
+	canFilterParams.FilterScale = CAN_FILTER_32BIT;
+	canFilterParams.Id[0].RTR = CAN_DATA_FRAME;
+	canFilterParams.Id[0].IDE = CAN_ID_STANDARD;
+	canFilterParams.Id[0].ID = 0x00000000;
+	canFilterParams.Mask[0].RTR = CAN_DATA_FRAME;
+	canFilterParams.Mask[0].IDE = CAN_ID_STANDARD;
+	canFilterParams.Mask[0].ID = 0x00000000;
+	canFilterParams.AssignedFifo = CAN_MSG_RX_FIFO0;
+	checkError(m_pBrg->InitFilterCAN(&canFilterParams));
+
+	// canFilterParams.FilterBankNb = 1;
+	// canFilterParams.AssignedFifo = CAN_MSG_RX_FIFO1;
+	// checkError(m_pBrg->InitFilterCAN(&canFilterParams));
+
+	checkError(m_pBrg->StartMsgReceptionCAN()); // never gonna call stop :P
+
+	return finalCANbaud;
 }
 
-void writeCAN(msgCAN msg) { // TODO
-	std::cout << msg << std::endl;
+void writeCAN(msgCAN msg) {
+	checkNull(m_pBrg);
 
 	std::string data = boost::python::extract<std::string>(msg.data);
+	Brg_CanTxMsgT cmsg;
+	cmsg.IDE = msg.extended ? CAN_ID_EXTENDED : CAN_ID_STANDARD;
+	cmsg.ID = msg.id;
+	cmsg.RTR = msg.remote ? CAN_REMOTE_FRAME : CAN_DATA_FRAME;
+	cmsg.DLC = data.size();
+	checkError(m_pBrg->WriteMsgCAN(&cmsg, (const uint8_t*) data.c_str(), cmsg.DLC));
 }
 
-msgCAN readCAN() { // TODO
-	return msgCAN();
+msgCAN readCAN() {
+	checkNull(m_pBrg);
+
+	while (readableCAN() == 0); // blocking
+
+	Brg_CanRxMsgT msg;
+	uint8_t data[8] = {0}; // max size
+	uint16_t num; // unused, use DLC
+	Brg_StatusT rc = m_pBrg->GetRxMsgCAN(&msg, 1, data, 8, &num);
+
+	if (rc != BRG_OVERRUN_ERR) {
+		checkError(rc);
+	} else {
+		std::cout << "Bruh read faster 🥺" << std::endl;
+	}
+
+	return msgCAN(msg.ID, std::string((const char*) data, msg.DLC), msg.RTR==CAN_REMOTE_FRAME, msg.IDE==CAN_ID_EXTENDED);
 }
 
-uint16_t readableCAN() { // TODO
-	return 0;
+uint16_t readableCAN() {
+	checkNull(m_pBrg);
+
+	uint16_t canMsgNum;
+	checkError(m_pBrg->GetRxMsgNbCAN(&canMsgNum));
+	return canMsgNum;
 }
 
 inline void checkError(Brg_StatusT stat) {

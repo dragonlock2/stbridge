@@ -34,10 +34,27 @@ if __name__ == '__main__':
 		try:
 			if st.readI2C(addr, 1):
 				print('Found!:', hex(addr))
-		except Exception as e:
+		except:
 			pass
 
-	# TODO CAN Test
+	# CAN Test
+	print("\nInitializing CAN at 1Mbps...")
+	try:
+		st.initCAN(1000000)
+
+		print("Sending some CAN messages...")
+		for _ in range(5):
+			st.writeCAN(st.msgCAN(42, b'Hello'))
+			print("Sent!")
+			time.sleep(0.1)
+
+		print("Listening to CAN for 1 sec...")
+		start = time.perf_counter()
+		while time.perf_counter() - start < 1:
+			if st.readableCAN():
+				print(st.readCAN())
+	except:
+		print("Failed CAN! Make sure transceiver and another node connected!")
 
 	# GPIO Test
 	print("\nTesting GPIO...")
