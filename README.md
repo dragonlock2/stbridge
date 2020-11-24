@@ -9,8 +9,8 @@ Python wrapper for STLINK-V3-BRIDGE. Tested on MacOS and Linux. Uses libusb for 
 * CAN
 
 ## Known Issues
-* Not reading CAN messages fast enough can crash USB comms on the next CAN operation, even init. Should be detected as an overrun but isn't. Also looks like more messages than can be stored in the STLINK's FIFO's can be read back which should indicate the STLINK is moving messages around behind the scenes.
-* Received remote CAN frames are misidentified as remote frames. Garbage data is returned in remote frames due to ST's driver. This appears to be an ST issue.
+* Not reading CAN messages fast enough can crash USB comms on the next CAN operation, even init. Should be detected as an overrun but isn't. Also looks like more messages than can be stored in the STLINK's FIFO's can be read back. I have a feeling what's happening is messages are stored on a separate FIFO on the STLINK and once it overruns, it crashes. This appears to be an ST issue.
+* Received remote CAN frames are misidentified as data frames. Garbage data is returned in remote frames due to ST's driver. This appears to be an ST issue.
 
 ## How to Build
 
