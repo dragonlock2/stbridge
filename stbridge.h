@@ -25,13 +25,13 @@ namespace stbridge {
 	enum class modeSPI { MODE0, MODE1, MODE2, MODE3 };
 
 	uint32_t initSPI(int kHz, bitorderSPI bitorder, modeSPI mode);
-	boost::python::list readSPI(uint16_t len);
-	void writeSPI(boost::python::list data);
+	boost::python::object readSPI(uint16_t len);
+	void writeSPI(std::string data);
 	void setnssSPI(bool level);
 
 	void initI2C(int kHz);
-	boost::python::list readI2C(uint16_t addr, uint16_t len);
-	void writeI2C(uint16_t addr, boost::python::list data);
+	boost::python::object readI2C(uint16_t addr, uint16_t len);
+	void writeI2C(uint16_t addr, std::string data);
 
 	enum class modeGPIO { OUTPUT, INPUT, INPUT_PULLUP, INPUT_PULLDOWN };
 
@@ -39,6 +39,27 @@ namespace stbridge {
 	void pinmodeGPIO(uint8_t pin, modeGPIO mode);
 	void writeGPIO(uint8_t pin, bool level);
 	bool readGPIO(uint8_t pin);
+
+	struct msgCAN {
+		uint32_t id;
+		boost::python::object data; // bytes object
+		bool remote;
+		bool extended;
+
+		msgCAN(uint32_t id=0, std::string data="", bool remote=0, bool extended=0) :
+			id(id),
+			data(boost::python::object(boost::python::handle<>(PyBytes_FromStringAndSize(data.c_str(), data.size())))),
+			remote(remote), extended(extended) {}
+
+		static boost::shared_ptr<msgCAN> msgCAN_init(uint32_t id, std::string data, bool remote, bool extended) {
+			return boost::shared_ptr<msgCAN>(new msgCAN(id, data, remote, extended));
+		}
+	};
+
+	uint32_t initCAN(int bps);
+	void writeCAN(msgCAN msg);
+	msgCAN readCAN();
+	uint16_t readableCAN();
 
 	void checkError(Brg_StatusT stat);
 	void checkNull(void* ptr);
@@ -92,6 +113,23 @@ BOOST_PYTHON_MODULE(stbridge) {
 	boost::python::def("pinmodeGPIO", stbridge::pinmodeGPIO);
 	boost::python::def("writeGPIO", stbridge::writeGPIO);
 	boost::python::def("readGPIO", stbridge::readGPIO);
+
+	boost::python::class_<stbridge::msgCAN>("msgCAN", boost::python::no_init)
+		.def("__init__", boost::python::make_constructor(stbridge::msgCAN::msgCAN_init, boost::python::default_call_policies(), (
+			boost::python::arg("id"), 
+			boost::python::arg("data"), 
+			boost::python::arg("remote")=false, 
+			boost::python::arg("extended")=false)))
+		.def(boost::python::self_ns::repr(boost::python::self_ns::self))
+		.def_readonly("extended", &stbridge::msgCAN::extended)
+		.def_readonly("id", &stbridge::msgCAN::id)
+		.def_readonly("remote", &stbridge::msgCAN::remote)
+		.def_readonly("data", &stbridge::msgCAN::data);
+
+	boost::python::def("initCAN", stbridge::initCAN);
+	boost::python::def("writeCAN", stbridge::writeCAN);
+	boost::python::def("readCAN", stbridge::readCAN);
+	boost::python::def("readableCAN", stbridge::readableCAN);
 }
 
 #endif

@@ -46,7 +46,7 @@ Check out stbridge.cpp and stbridge.h as well as tests/ for function syntax.
 
 ## Aside
 
-This is just for future reference, but the original driver (libSTLinkUSBDriver.so or .dylib) from ST appears to use libusb under the hood. However, it's compiled for x86 which was the motivation for switching to pure libusb. I wouldn't be surprised if ST releases an ARM driver soon because of Apple Silicon.
+This is just for future reference, but the original driver (libSTLinkUSBDriver.so or .dylib) from ST appears to use libusb under the hood. However, it's compiled for x86 which was the motivation for switching to pure libusb. I wouldn't be surprised if ST releases an ARM driver soon because of Apple Silicon. Also the driver handles much more than just the bridge functions.
 
 ## License
 

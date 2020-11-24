@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
 	print('Sending out 0x69... ', end='')
 	st.setnssSPI(0)
-	st.writeSPI([0x69])
+	st.writeSPI(bytes([0x69]))
 	st.setnssSPI(1)
 
 	st.setnssSPI(0)

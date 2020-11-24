@@ -12,14 +12,8 @@ ADDR = 0x6a
 st.open()
 st.initI2C(400)
 
-st.writeI2C(ADDR, [0x10, 0b10100000]) # accel settings
-st.writeI2C(ADDR, [0x11, 0b10101000]) # gyro settings
-
-# pybridge.writeI2C(ADDR, [0x28]) # accel
-# a = pybridge.readI2C(ADDR, 6)
-
-# pybridge.writeI2C(ADDR, [0x22]) # gyro
-# g = pybridge.readI2C(ADDR, 6)
+st.writeI2C(ADDR, bytes([0x10, 0b10100000])) # accel settings
+st.writeI2C(ADDR, bytes([0x11, 0b10101000])) # gyro settings
 
 # graphing stuff
 MAX_POINTS = 500
@@ -41,10 +35,10 @@ ax.legend(bbox_to_anchor=(1,1), loc='upper left')
 
 def update(i):
 	# get data
-	st.writeI2C(ADDR, [0x28]) # accel
-	dat = struct.unpack('<3h', bytes(st.readI2C(ADDR, 6)))
-	st.writeI2C(ADDR, [0x22]) # gyro
-	dat += struct.unpack('<3h', bytes(st.readI2C(ADDR, 6)))
+	st.writeI2C(ADDR, bytes([0x28])) # accel
+	dat = struct.unpack('<3h', st.readI2C(ADDR, 6))
+	st.writeI2C(ADDR, bytes([0x22])) # gyro
+	dat += struct.unpack('<3h', st.readI2C(ADDR, 6))
 
 	# update our lists
 	for val, ys in zip(dat, yss):
