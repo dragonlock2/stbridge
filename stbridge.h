@@ -16,7 +16,7 @@
  */
 
 namespace stbridge {
-	void open();
+	void open(std::string serial_number = "");
 	void close();
 
 	float getTargetVoltage();
