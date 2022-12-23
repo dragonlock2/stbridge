@@ -5,19 +5,23 @@ namespace stbridge {
 Brg* m_pBrg = NULL;
 STLinkInterface *m_pStlinkIf = NULL;
 
-void open() {
+void open(std::string serial_number) {
+  bool strict = false;
 	m_pStlinkIf = new STLinkInterface(STLINK_BRIDGE);
 
 	Brg_StatusT brgStat = BRG_NO_ERR;
 	STLinkIf_StatusT ifStat = m_pStlinkIf->LoadStlinkLibrary(""); // doesn't do anything on !WIN32 but needed
 
+  if (serial_number.length() > 0) {
+    strict = true;
+  }
 	if (ifStat == STLINKIF_NO_ERR) {
 		brgStat = Brg::ConvSTLinkIfToBrgStatus(m_pStlinkIf->EnumDevices(NULL, false));
 	}
 	if (brgStat == BRG_NO_ERR) {
 		m_pBrg = new Brg(*m_pStlinkIf);
 		m_pBrg->SetOpenModeExclusive(true);
-		brgStat = m_pBrg->OpenStlink(0); // open first device
+		brgStat = m_pBrg->OpenStlink(serial_number.c_str(), strict); // open first device
 		if (brgStat == BRG_OLD_FIRMWARE_WARNING) {
 			std::cout << "OLD FIRMWARE BUT PROBS FINE" << std::endl;
 			brgStat = BRG_NO_ERR;
