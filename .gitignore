@@ -5,5 +5,7 @@ version.txt
 # compile stuff
 build/
 *.so
+stbridge.egg-info/
 
 .DS_Store
+.vscode/
