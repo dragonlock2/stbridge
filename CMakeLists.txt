@@ -9,7 +9,6 @@ add_subdirectory(pybind11)
 pybind11_add_module(stbridge
     stbridge.cpp
     libs/src/bridge/bridge.cpp
-    libs/src/common/criticalsectionlock.cpp
     libs/src/common/stlink_device.cpp
     libs/src/common/stlink_interface.cpp
     libs/src/error/ErrLog.cpp

@@ -2,7 +2,7 @@
 
 Python wrapper for STLINK-V3-BRIDGE. Tested on macOS, Windows, and Linux. Uses `libusb` for straightforward cross-platform support.
 
-This project is semi-abandoned due to being tied to proprietary hardware. See https://github.com/dragonlock2/JABI for a true cross-hardware solution.
+This project is semi-abandoned due to being tied to proprietary hardware and ST's license. See https://github.com/dragonlock2/JABI for a true cross-hardware solution.
 
 ## Supported features
 - SPI controller
