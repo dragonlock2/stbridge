@@ -54,8 +54,7 @@ if __name__ == '__main__':
 
     # GPIO Test
     print("\nTesting GPIO...")
-    NUM_GPIO = 4
-    for i in range(NUM_GPIO):
+    for i in range(st.BRG_GPIO_MAX_NB):
         print('Flashing GPIO', i, '\b...')
         dev.gpio_set_mode(i, st.GPIODir.OUTPUT)
         dev.gpio_write(i, 0)
@@ -64,13 +63,26 @@ if __name__ == '__main__':
             time.sleep(0.1)
 
     print('Reading GPIO using internal pull-ups, so disconnect any loads')
-    for i in range(NUM_GPIO):
+    for i in range(st.BRG_GPIO_MAX_NB):
         dev.gpio_set_mode(i, st.GPIODir.INPUT, st.GPIOPull.UP if (i % 2 == 0) else st.GPIOPull.DOWN)
-    for i in range(NUM_GPIO):
+    for i in range(st.BRG_GPIO_MAX_NB):
         print("Reading GPIO", i, "\b...", "SUCCESS" if (dev.gpio_read(i) == (i % 2 == 0)) else "FAIL")
-    for i in range(NUM_GPIO):
+    for i in range(st.BRG_GPIO_MAX_NB):
         dev.gpio_set_mode(i, st.GPIODir.INPUT, st.GPIOPull.DOWN if (i % 2 == 0) else st.GPIOPull.UP)
-    for i in range(NUM_GPIO):
+    for i in range(st.BRG_GPIO_MAX_NB):
         print("Reading GPIO", i, "\b...", "SUCCESS" if (dev.gpio_read(i) != (i % 2 == 0)) else "FAIL")
-
     print('\nDone!')
+
+    NUM_LIMIT = 2 ** st.BRG_GPIO_MAX_NB
+    print(f'Toggling out the numbers 0-{NUM_LIMIT - 1} in binary where GPIO 0 is the LSb')
+    for i in range(st.BRG_GPIO_MAX_NB):
+        dev.gpio_set_mode(i, st.GPIODir.OUTPUT)
+
+    dev.gpio_write_all(0)
+    time.sleep(1)
+
+    for i in range(NUM_LIMIT):
+        dev.gpio_write_all(i)
+
+    dev.gpio_write_all(0)
+    print('Done!')

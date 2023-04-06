@@ -250,6 +250,21 @@ void Device::gpio_write(int idx, bool val) {
     }
 }
 
+void Device::gpio_write_all(int pin_vals) {
+    if (pin_vals >= 1 << BRG_GPIO_MAX_NB) {
+        throw std::runtime_error("pin_vals too large!");
+    }
+    Brg_GpioValT gpio_vals[BRG_GPIO_MAX_NB];
+    uint8_t gpio_err;
+    for (int i = 0; i < BRG_GPIO_MAX_NB; ++i) {
+        gpio_vals[i] = pin_vals & (1 << i) ? GPIO_SET : GPIO_RESET;
+    }
+    check_error(brg->SetResetGPIO((1 << BRG_GPIO_MAX_NB) - 1, gpio_vals, &gpio_err));
+    if (gpio_err != 0) {
+        throw std::runtime_error("GPIO error??");
+    }
+}
+
 bool Device::gpio_read(int idx) {
     if (idx >= BRG_GPIO_MAX_NB) {
         throw std::runtime_error("invalid pin number!");
@@ -411,12 +426,14 @@ PYBIND11_MODULE(stbridge, m) {
         .value("UP", GPIOPull::UP)
         .value("DOWN", GPIOPull::DOWN);
 
+    m.attr("BRG_GPIO_MAX_NB") = BRG_GPIO_MAX_NB;
+
     py::enum_<ADCChannel>(m, "ADCChannel")
         .value("TARGET_VOLTAGE", ADCChannel::TARGET_VOLTAGE);
 
     py::class_<Device>(m, "Device")
         .def("serial", &Device::serial)
-        
+
         .def("can_set_filter", &Device::can_set_filter)
         .def("can_set_rate", &Device::can_set_rate)
         .def("can_set_mode", &Device::can_set_mode)
@@ -429,6 +446,7 @@ PYBIND11_MODULE(stbridge, m) {
 
         .def("gpio_set_mode", &Device::gpio_set_mode, "idx"_a, "dir"_a=GPIODir::INPUT, "pull"_a=GPIOPull::NONE)
         .def("gpio_write", &Device::gpio_write)
+        .def("gpio_write_all", &Device::gpio_write_all)
         .def("gpio_read", &Device::gpio_read)
 
         .def("adc_read", &Device::adc_read, "chan"_a=ADCChannel::TARGET_VOLTAGE)

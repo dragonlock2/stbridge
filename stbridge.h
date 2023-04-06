@@ -70,6 +70,7 @@ public:
     /* GPIO */
     void gpio_set_mode(int idx, GPIODir dir=GPIODir::INPUT, GPIOPull pull=GPIOPull::NONE);
     void gpio_write(int idx, bool val);
+    void gpio_write_all(int pin_vals);
     bool gpio_read(int idx);
 
     /* ADC */
