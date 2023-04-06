@@ -86,8 +86,8 @@ public:
 private:
     Device(std::string sn, std::shared_ptr<Brg> brg, std::shared_ptr<STLinkInterface> stlink);
 
-    std::shared_ptr<Brg> brg;
     std::shared_ptr<STLinkInterface> stlink;
+    std::shared_ptr<Brg> brg;
 
     std::string sn;
     Brg_CanInitT can_params;
