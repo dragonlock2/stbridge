@@ -43,7 +43,6 @@ Check out [`stbridge.cpp`](stbridge.cpp) and [`stbridge.h`](stbridge.h) as well 
 ## Known Issues
 - Not reading CAN messages fast enough can crash USB comms on the next CAN operation, even init. Should be detected as an overrun but isn't. Also looks like more messages than can be stored in the STLINK's FIFO's can be read back. I have a feeling what's happening is messages are stored on a separate FIFO on the STLINK and once it overruns, it crashes. This appears to be an ST issue.
 - Received remote CAN frames are misidentified as data frames. Garbage data is returned in remote frames due to ST's driver. This appears to be an ST issue.
-- There's some memory leaks in the [backend driver](https://github.com/dragonlock2/STLINK-V3-BRIDGE_libusb/) which has to do with device enumeration. Should only affect device construction/destruction and enumeration. I'm too lazy to fix this.
 - Setting CAN filters for specific extended IDs throws a parameter error. Letting everything through still works. I'm too lazy to fix this.
 
 ## License
