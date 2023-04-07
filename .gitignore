@@ -1,11 +1,15 @@
-# from ST
+# ST stuff
 libSTLinkUSBDriver.*
 version.txt
 
-# compile stuff
+# Compile stuff
 build/
 *.so
 stbridge.egg-info/
 
+# Cscope stuff
+cscope.*
+
+# IDE stuff
 .DS_Store
 .vscode/
