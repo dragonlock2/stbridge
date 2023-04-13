@@ -4,14 +4,14 @@ project(stbridge)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_subdirectory(pybind11)
+add_subdirectory(libs/pybind11)
 
 pybind11_add_module(stbridge
     stbridge.cpp
-    libs/src/bridge/bridge.cpp
-    libs/src/common/stlink_device.cpp
-    libs/src/common/stlink_interface.cpp
-    libs/src/error/ErrLog.cpp
+    libs/STLINK-V3-BRIDGE_libusb/src/bridge/bridge.cpp
+    libs/STLINK-V3-BRIDGE_libusb/src/common/stlink_device.cpp
+    libs/STLINK-V3-BRIDGE_libusb/src/common/stlink_interface.cpp
+    libs/STLINK-V3-BRIDGE_libusb/src/error/ErrLog.cpp
 )
 
 find_package(libusb CONFIG QUIET)
@@ -23,7 +23,7 @@ target_link_libraries(stbridge PRIVATE ${LIBUSB_LIBRARIES})
 
 target_include_directories(stbridge PRIVATE
     ${LIBUSB_INCLUDE_DIRS}
-    libs/src/bridge
-    libs/src/common
-    libs/src/error
+    libs/STLINK-V3-BRIDGE_libusb/src/bridge
+    libs/STLINK-V3-BRIDGE_libusb/src/common
+    libs/STLINK-V3-BRIDGE_libusb/src/error
 )
