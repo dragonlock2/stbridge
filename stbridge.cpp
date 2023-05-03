@@ -377,6 +377,7 @@ std::vector<Device> USBInterface::list_devices() {
         std::string sn(info.EnumUniqueId);
 
         auto brg = std::make_shared<Brg>(*stlink);
+        brg->SetOpenModeExclusive(false);
         check_error(brg->OpenStlink(sn.c_str(), true));
         devices.push_back(Device(sn, brg, stlink));
     }
