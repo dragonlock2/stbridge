@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import multiprocessing
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
@@ -37,7 +38,7 @@ class CMakeBuild(build_ext):
             os.makedirs(build_temp)
 
         subprocess.check_call(["cmake", ext.sourcedir] + cmake_args, cwd=build_temp)
-        subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=build_temp)
+        subprocess.check_call(["cmake", "--build", ".", f"-j{multiprocessing.cpu_count()}"] + build_args, cwd=build_temp)
 
 setup(
     name="stbridge",

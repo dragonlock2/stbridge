@@ -2,7 +2,7 @@
 
 Python wrapper for STLINK-V3-BRIDGE. Tested on macOS, Windows, and Linux. Uses `libusb` for straightforward cross-platform support.
 
-This project is semi-abandoned due to being tied to proprietary hardware and ST's license. See https://github.com/dragonlock2/JABI for a true cross-hardware solution.
+Development on this project will only be for bug fixes and PRs due to being tied to proprietary hardware and ST's license. See https://github.com/dragonlock2/JABI for a true cross-hardware solution.
 
 ## Supported features
 - SPI controller
@@ -43,7 +43,7 @@ Check out [`stbridge.cpp`](stbridge.cpp) and [`stbridge.h`](stbridge.h) as well 
 ## Known Issues
 - Not reading CAN messages fast enough can crash USB comms on the next CAN operation, even init. Should be detected as an overrun but isn't. Also looks like more messages than can be stored in the STLINK's FIFO's can be read back. I have a feeling what's happening is messages are stored on a separate FIFO on the STLINK and once it overruns, it crashes. This appears to be an ST issue.
 - Received remote CAN frames are misidentified as data frames. Garbage data is returned in remote frames due to ST's driver. This appears to be an ST issue.
-- Setting CAN filters for specific extended IDs throws a parameter error. Letting everything through still works. I'm too lazy to fix this.
+- Setting CAN filters for specific extended IDs throws a parameter error. Letting everything through still works.
 
 ## License
 This software is under ST's [Ultimate Liberty License](https://www.st.com/content/ccc/resource/legal/legal_agreement/license_agreement/group0/87/0c/3d/ad/0a/ba/44/26/DM00216740/files/DM00216740.pdf/jcr:content/translations/en.DM00216740.pdf).
