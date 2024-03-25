@@ -4,6 +4,7 @@ version.txt
 
 # Compile stuff
 build/
+dist/
 *.so
 stbridge.egg-info/
 

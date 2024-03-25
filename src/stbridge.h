@@ -1,8 +1,8 @@
 #ifndef STBRIDGE_H
 #define STBRIDGE_H
 
+#include <memory>
 #include <vector>
-#include "bridge.h"
 
 /*
  * API designed to closely match JABI
@@ -85,18 +85,11 @@ public:
     std::vector<uint8_t> spi_read(size_t len);
 
 private:
-    Device(std::string sn, std::shared_ptr<Brg> brg, std::shared_ptr<STLinkInterface> stlink);
+    // using PImpl to workaround libusb.h and pyconfig.h defining ssize_t
+    struct device_data;
+    std::shared_ptr<device_data> pdata;
 
-    std::shared_ptr<STLinkInterface> stlink;
-    std::shared_ptr<Brg> brg;
-
-    std::string sn;
-    Brg_CanInitT can_params;
-    Brg_CanFilterConfT can_filter_params;
-    Brg_I2cInitT i2c_params;
-    Brg_GpioConfT gpio_conf[BRG_GPIO_MAX_NB];
-    Brg_SpiInitT spi_params;
-
+    Device(std::shared_ptr<device_data> pdata);
     friend class USBInterface;
 };
 

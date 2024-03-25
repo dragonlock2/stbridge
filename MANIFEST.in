@@ -1,0 +1,6 @@
+include src/stbridge.h
+graft src/STLINK-V3-BRIDGE_libusb
+recursive-include src/libusb *.c *.h
+recursive-include src/libusb *.sh *.ac *.am *.in *.extra
+recursive-include src/libusb *.sln *.vcxproj *.props
+recursive-include src/libusb AUTHORS ChangeLog NEWS README

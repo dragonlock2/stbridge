@@ -1,0 +1,30 @@
+[project]
+name = "stbridge"
+version = "0.1.0"
+authors = [
+    { name = "Matthew Tran", email = "matthewlamtran@berkeley.edu" },
+]
+description = "Python wrapper for STLINK-V3-BRIDGE"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/dragonlock2/stbridge"
+Issues = "https://github.com/dragonlock2/stbridge/issues"
+
+[build-system]
+requires = ["wheel>=0.43", "setuptools>=69", "pybind11>=2.11"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = ["examples"]
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.cibuildwheel.macos]
+before-all = "brew install autoconf automake libtool"
