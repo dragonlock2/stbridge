@@ -17,7 +17,12 @@ Homepage = "https://github.com/dragonlock2/stbridge"
 Issues = "https://github.com/dragonlock2/stbridge/issues"
 
 [build-system]
-requires = ["wheel>=0.43", "setuptools>=69", "pybind11>=2.11"]
+requires = [
+    "wheel>=0.44",
+    "setuptools>=72",
+    "setuptools<72.2.0; implementation_name == 'pypy'", # https://github.com/pypa/distutils/issues/283
+    "pybind11>=2.13"
+]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
