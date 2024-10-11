@@ -360,6 +360,7 @@ Device USBInterface::get_device(std::string sn) {
     }
 
     auto brg = std::make_shared<Brg>(*stlink);
+    brg->SetOpenModeExclusive(false);
     check_error(Brg::ConvSTLinkIfToBrgStatus(stlink->EnumDevices(NULL, false)));
     check_error(brg->OpenStlink(sn.c_str(), true));
 
